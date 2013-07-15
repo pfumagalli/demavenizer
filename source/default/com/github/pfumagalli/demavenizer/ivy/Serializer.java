@@ -32,50 +32,47 @@ public class Serializer {
         out.println("            xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
         out.println("            xsi:noNamespaceSchemaLocation=\"http://ant.apache.org/ivy/schemas/ivy.xsd\">");
         out.println();
-        out.println("  <info e:maven=\"" + escape(descriptor.getMavenId()) + "\"");
-        out.println("        organisation=\"" + escape(descriptor.getOrganisation()) + "\"");
+        out.println("  <info organisation=\"" + escape(descriptor.getOrganisation()) + "\"");
         out.println("        module=\""+ escape(descriptor.getModule()) + "\"");
         out.println("        revision=\"" + escape(descriptor.getRevision().toString()) + "\"");
         out.println("        publication=\"" + escape(descriptor.getPublicationDateString()) + "\"");
+        out.println("        status=\"release\">");
 
+        /* Licenses */
         final Map<License, URI> licenses = descriptor.getLicenses();
+        if (!licenses.isEmpty()) {
+            out.println();
+            for (final Entry<License, URI> entry: licenses.entrySet()) {
+                final License license = entry.getKey();
+                final URI licenseURI = entry.getValue();
+                if ((licenseURI != null) && (!licenseURI.equals(license.getURI()))) {
+                    out.println("    <!-- " + escape(licenseURI.toASCIIString()) + " -->");
+                }
+                out.println("    <license name=\"" + escape(license.getName()) + "\"");
+                out.println("             url=\"" + escape(license.getURI().toASCIIString()) + "\"/>");
+            }
+        }
+
+        /* Home page */
         final URI homePageURI = descriptor.getHomePage();
         final String description = descriptor.getDescription();
-
-        if (licenses.isEmpty() && homePageURI == null && description == null) {
-            out.println("        status=\"release\"/>");
-        } else {
-            out.println("        status=\"release\">");
-
-            if (!licenses.isEmpty()) {
-                out.println();
-                for (final Entry<License, URI> entry: licenses.entrySet()) {
-                    final License license = entry.getKey();
-                    final URI licenseURI = entry.getValue();
-                    if ((licenseURI != null) && (!licenseURI.equals(license.getURI()))) {
-                        out.println("    <!-- " + escape(licenseURI.toASCIIString()) + " -->");
-                    }
-                    out.println("    <license name=\"" + escape(license.getName()) + "\"");
-                    out.println("             url=\"" + escape(license.getURI().toASCIIString()) + "\"/>");
-                }
-            }
-
-            if (homePageURI != null || description != null) {
-                out.println();
-                out.print("    <description");
-                if (homePageURI != null) out.print(" homepage=\"" + escape(homePageURI.toASCIIString()) + "\"");
-                if (description == null) {
-                    out.println("/>");
-                } else {
-                    out.println(">");
-                    out.println("      " + escape(description));
-                    out.println("    </description>");
-                }
-            }
-
+        if (homePageURI != null || description != null) {
             out.println();
-            out.println("  </info>");
+            out.print("    <description");
+            if (homePageURI != null) out.print(" homepage=\"" + escape(homePageURI.toASCIIString()) + "\"");
+            if (description == null) {
+                out.println("/>");
+            } else {
+                out.println(">");
+                out.println("      " + escape(description));
+                out.println("    </description>");
+            }
         }
+
+        /* Our marker for maven mappings */
+        out.println();
+        out.println("    <e:maven id=\"" + escape(descriptor.getMavenId()) + "\"/>");
+        out.println("  </info>");
 
         out.println();
         out.println("  <configurations>");

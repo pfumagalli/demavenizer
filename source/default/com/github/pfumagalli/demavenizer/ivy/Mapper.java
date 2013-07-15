@@ -116,7 +116,9 @@ public class Mapper {
             String module = null;
             String revision = null;
             for (final Node info: node.getChildren("info")) {
-                maven = info.getAttribute("maven");
+                for (final Node mavenNode: info.getChildren("maven")) {
+                    maven = mavenNode.getAttribute("id");
+                }
                 organisation = info.getAttribute("organisation");
                 module = info.getAttribute("module");
                 revision = info.getAttribute("revision");
