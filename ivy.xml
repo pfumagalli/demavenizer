@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0">
+  <info module="demavenizer" organisation="com.github.pfumagalli" revision="0.0.0" />
+  <configurations>
+    <conf name="default"/>
+    <conf name="test"/>
+  </configurations>
+  <dependencies>
+    <dependency org="org.testng" name="testng" rev="6.8.5" conf="test->default"/>
+  </dependencies>
+</ivy-module>

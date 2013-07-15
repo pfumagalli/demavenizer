@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="dist" name="demavenizer">
+  <property name="builddir" value="../build" />
+  <import file="${builddir}/build.xml" />
+</project>
