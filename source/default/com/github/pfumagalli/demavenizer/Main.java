@@ -114,8 +114,8 @@ public class Main {
         /* Check the Ivy file */
         final File file = new File(new File(new File(new File(librariesDir, descriptor.getOrganisation()), descriptor.getModule()), descriptor.getRevision().toString()), "ivy.xml").getCanonicalFile();
         if (file.exists()) {
-            Log.error("Ivy file " + file + " already exists, bailing out..");
-            return;
+            Log.error("Ivy file " + file + " already exists, double confirmation needed! [CRTL-C to exit]");
+            new BufferedReader(new InputStreamReader(System.in)).readLine();
         }
 
         /* Wait for acknowledgement and write */
