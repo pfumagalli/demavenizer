@@ -64,6 +64,10 @@ public class Identifier implements Comparable<Identifier> {
         return version;
     }
 
+    public Identifier unversioned() {
+        return new Identifier(groupId, artifactId, null);
+    }
+
     public String asString() {
         final StringBuilder builder = new StringBuilder(groupId).append('#').append(artifactId);
         if (version != null) builder.append('#').append(version);

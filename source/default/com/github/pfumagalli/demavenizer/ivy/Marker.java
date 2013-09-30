@@ -25,7 +25,7 @@ public class Marker implements Comparable<Marker> {
         organisation = marker.substring(0, hash1).trim();
         if (hash2 < 0) {
             module = marker.substring(hash1 + 1).trim();
-            revision = null;
+            revision = new Revision(identifier.getVersion());
         } else {
             module = marker.substring(hash1 + 1, hash2).trim();
             revision = new Revision(marker.substring(hash2 + 1).trim());

@@ -26,7 +26,7 @@ public class Mapper {
     public Mapper(File repository, File mappings) {
         if (!repository.isDirectory())
             throw new IllegalArgumentException("Invalid directory " + repository);
-        Log.info("Initializing repository from " + repository);
+        Log.info("Initializing repository mappings from " + repository);
         read(repository);
 
         if (!mappings.isFile())
@@ -36,7 +36,22 @@ public class Mapper {
         calculateLatest();
     }
 
-    public Marker getDescriptor(Identifier identifier) {
+    public Marker getLatest(String identifier) {
+        return getLatest(new Identifier(identifier));
+    }
+
+    public Marker getLatest(Identifier identifier) {
+        final Identifier unversioned = identifier.unversioned();
+        if (latestVersion.containsKey(unversioned)) return latestVersion.get(unversioned);
+        for (final Marker marker: latestVersion.values()) {
+            if ((!marker.getOrganisation().equals(identifier.getGroupId())) |
+                (!marker.getModule().equals(identifier.getArtifactId()))) continue;
+            return marker;
+        }
+        return null;
+    }
+
+    public Marker getIvyMarker(Identifier identifier) {
 
         /* Forced mapping? */
         final Identifier mapped = mavenMappings.get(identifier);
@@ -62,19 +77,17 @@ public class Mapper {
         for (final Entry<Identifier, Marker> entry: ivyMappings.entrySet()) {
 
             final Identifier identifier = entry.getKey();
-            final Identifier notVersioned = new Identifier(identifier.getGroupId(),
-                                                           identifier.getArtifactId(),
-                                                           null);
+            final Identifier unversioned = identifier.unversioned();
 
             final Marker marker = entry.getValue();
-            final Marker found = latestVersion.get(notVersioned);
+            final Marker found = latestVersion.get(unversioned);
             if (found == null) {
-                latestVersion.put(notVersioned, marker);
+                latestVersion.put(unversioned, marker);
             } else {
                 if (found.getOrganisation().equals(marker.getOrganisation()) &&
                     found.getModule().equals(marker.getModule())) {
                     if (found.getRevision().compareTo(marker.getRevision()) < 0)
-                        latestVersion.put(notVersioned, marker);
+                        latestVersion.put(unversioned, marker);
                 } else {
                     throw new IllegalStateException("Organization/module mismatch comparing versions for " + marker.asString() + " and " + found.asString());
                 }

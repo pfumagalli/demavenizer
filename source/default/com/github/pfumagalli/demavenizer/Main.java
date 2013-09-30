@@ -23,20 +23,41 @@ public class Main {
         throw new IllegalStateException();
     }
 
+    private static void help() {
+        Log.info("");
+        Log.warn("Usage: " + Main.class.getName() + " [-fetch] [-update] <maven groupId#artifactId#version> [ivy organisation#module#revision]");
+        Log.info("  -update        : Update an already mapped library");
+        Log.info("  -fetch         : Fetch binaries rather than linking them");
+        Log.info("  -help          : Show this help page");
+        Log.info("");
+        Log.warn("System properties:");
+        Log.info("  licenses.file  : Properties file of accepted licenses");
+        Log.info("  libraries.dir  : Directory where all \"ivy.xml\" are found");
+        Log.info("  mappings.file  : Properties file for Maven to Maven mappings");
+        Log.info("  maven.url      : Base URL of the Maven repository");
+        Log.info("");
+        System.exit(1);
+    }
+
     public static void main(String[] args)
     throws Exception {
 
-        if (args.length < 1) {
-            Log.info("Usage: " + Main.class.getName() + " <maven groupId#artifactId#version> [ivy organisation#module#revision]");
-            Log.info("");
-            Log.info("System properties:");
-            Log.info("  licenses.file  : Properties file of accepted licenses");
-            Log.info("  libraries.dir  : Directory where all \"ivy.xml\" are found");
-            Log.info("  mappings.file  : Properties file for Maven to Maven mappings");
-            Log.info("  maven.url      : Base URL of the Maven repository");
-            Log.info("");
-            return;
+        if (args.length < 1) help();
+
+        /* Process command line options */
+        boolean update = false;
+        boolean fetch = false;
+        int x = 0;
+        while (x < args.length) {
+            if ("-help".equals(args[x])) help();
+            else if ("-update".equals(args[x])) update = true;
+            else if ("-fetch".equals(args[x])) fetch = true;
+            else break;
+            x ++;
         }
+
+        /* Do we still have some options? */
+        if (args.length <= x) help();
 
         /* Repository URL */
         final String mavenUrlProperty = System.getProperty("maven.url");
@@ -86,11 +107,35 @@ public class Main {
         }
         License.load(licensesFile);
 
-        /* Load the original project */
-        final Project project = repository.getProject(new Identifier(args[0]));
+        /* If we're updating to the last version, we have some work to do */
+        final Project project;
+        final Marker translated;
 
-        /* Get our marker if we need to translate */
-        final Marker translated = args.length < 2 ? null : new Marker(project, args[1]);
+        if (update) {
+
+            /* Get the latest version of the required module */
+            final Marker marker = mapper.getLatest(args[x++]);
+            if (marker == null) {
+                Log.error("Unable to locate " + args[x - 1] + " in repository");
+                return;
+            }
+
+            /* Start a project from the original identifer (unversioned) */
+            project = repository.getProject(marker.getIdentifier().unversioned());
+
+            /* If we have specified a translation, use it, otherwise default to the marker */
+            if (x < args.length) {
+                translated = new Marker(project, args[x]);
+            } else {
+                translated = new Marker(project, marker.getOrganisation() + "#" + marker.getModule());
+            }
+
+        } else {
+
+            /* We're not updating, so we construct everything as normal */
+            project = repository.getProject(new Identifier(args[x++]));
+            translated = x < args.length ? new Marker(project, args[x]) : null;
+        }
 
         /* Create the descriptor */
         final Descriptor descriptor;

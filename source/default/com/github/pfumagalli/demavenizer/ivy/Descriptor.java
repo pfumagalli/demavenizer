@@ -44,7 +44,7 @@ public class Descriptor extends Marker {
         /* Find and resolve dependencies */
         final List<Dependency> missing = new ArrayList<>();
         for (final Dependency dependency: project.getDependencies()) {
-            final Marker marker = mapper.getDescriptor(dependency);
+            final Marker marker = mapper.getIvyMarker(dependency);
 
             if (dependency.isOptional()) {
                 optionalDependencies.put(dependency, marker);
@@ -54,7 +54,7 @@ public class Descriptor extends Marker {
                     if (marker == null) {
                         missing.add(dependency);
                     } else {
-                        dependencies.put(mapper.getDescriptor(dependency), dependency);
+                        dependencies.put(mapper.getIvyMarker(dependency), dependency);
                     }
                     break;
                 default: // ignore PROVIDED, SYSTEM, TEST
