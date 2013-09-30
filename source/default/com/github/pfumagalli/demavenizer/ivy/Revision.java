@@ -22,14 +22,19 @@ public final class Revision implements Comparable<Revision> {
         }
 
         /* Figure out the main version numbers */
-        if (dot1 < 0) throw new IllegalArgumentException("Invalid identifier \"" + revision + "\"");
-        major = Integer.parseInt(revision.substring(0, dot1).trim());
-        if (dot2 < 0) {
-            minor = Integer.parseInt(revision.substring(dot1 + 1).trim());
+        if (dot1 < 0) {
+            major = Integer.parseInt(revision);
+            minor = -1;
             build = -1;
         } else {
-            minor = Integer.parseInt(revision.substring(dot1 + 1, dot2).trim());
-            build = Integer.parseInt(revision.substring(dot2 + 1).trim());
+            major = Integer.parseInt(revision.substring(0, dot1).trim());
+            if (dot2 < 0) {
+                minor = Integer.parseInt(revision.substring(dot1 + 1).trim());
+                build = -1;
+            } else {
+                minor = Integer.parseInt(revision.substring(dot1 + 1, dot2).trim());
+                build = Integer.parseInt(revision.substring(dot2 + 1).trim());
+            }
         }
     }
 
@@ -70,8 +75,8 @@ public final class Revision implements Comparable<Revision> {
 
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append(major).append('.').append(minor);
+        final StringBuilder builder = new StringBuilder().append(major);
+        if (minor >= 0) builder.append('.').append(minor);
         if (build >= 0) builder.append('.').append(build);
         if (mark != null) builder.append('-').append(mark);
         return builder.toString();
