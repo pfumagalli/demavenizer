@@ -182,9 +182,7 @@ public class Main {
         System.out.flush();
 
         /* Check the Ivy file */
-        final String ivyFileName = configuration.getResolved("artifacts.ivy.pattern", descriptor.asMap());
-        Log.error("----> " + ivyFileName);
-        final File file = new File(new File(new File(new File(librariesDir, descriptor.getOrganisation()), descriptor.getModule()), descriptor.getRevision().toString()), "ivy.xml").getCanonicalFile();
+        final File file = new File(configuration.getResolved("artifacts.ivy.pattern", descriptor.asMap())).getCanonicalFile();
         if (file.exists()) {
             Log.error("Ivy file " + file + " already exists, double confirmation needed! [CRTL-C to exit]");
             new BufferedReader(new InputStreamReader(System.in)).readLine();
