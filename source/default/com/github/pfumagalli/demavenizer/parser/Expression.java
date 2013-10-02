@@ -48,7 +48,11 @@ public abstract class Expression {
                new AggregateExpression(expressions);
     }
 
-    public abstract String evaluate(Map<?, ?> context);
+    public String evaluate(Map<?, ?> context) {
+        return this.evaluate(context, false);
+    }
+
+    public abstract String evaluate(Map<?, ?> context, boolean ignoreMissing);
 
     /* ====================================================================== */
 
@@ -59,7 +63,7 @@ public abstract class Expression {
         }
 
         @Override
-        public String evaluate(Map<?, ?> context) {
+        public String evaluate(Map<?, ?> context, boolean ignoreMissing) {
             return "";
         }
 
@@ -76,10 +80,10 @@ public abstract class Expression {
         }
 
         @Override
-        public String evaluate(Map<?, ?> context) {
+        public String evaluate(Map<?, ?> context, boolean ignoreMissing) {
             final StringBuilder builder = new StringBuilder();
             for (final Expression expression: expressions)
-                builder.append(expression.evaluate(context));
+                builder.append(expression.evaluate(context, ignoreMissing));
             return builder.toString();
         }
     }
@@ -96,7 +100,7 @@ public abstract class Expression {
         }
 
         @Override
-        public String evaluate(Map<?, ?> context) {
+        public String evaluate(Map<?, ?> context, boolean ignoreMissing) {
             return token;
         }
     }
@@ -130,7 +134,7 @@ public abstract class Expression {
         }
 
         @Override
-        public String evaluate(Map<?, ?> context) {
+        public String evaluate(Map<?, ?> context, boolean ignoreMissing) {
 
             /* No context? Bye! */
             if (context == null) return null;
@@ -148,7 +152,8 @@ public abstract class Expression {
             object = System.getProperty(expression);
             if (object != null) return object.toString();
 
-            /* Warn */
+            /* Ignore missing or warn */
+            if (ignoreMissing) return "${" + expression + "}";
             Log.error("Unable to resolve ${" + expression + "} found in " + uri);
             return null;
         }
