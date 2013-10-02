@@ -199,7 +199,7 @@ public class Main {
             for (final Entry<ArtifactType, URI> entry: descriptor.getArtifacts().entrySet()) {
                 final ArtifactType type = entry.getKey();
                 final URI uri = entry.getValue();
-                final File artifact = new File(file.getParentFile(), descriptor.getModule() + "-" + type.name().toLowerCase() + type.getExtension(configuration));
+                final File artifact = new File(type.getArtifactFile(configuration, descriptor)).getCanonicalFile();
                 Log.warn("Fetching " + uri);
                 Log.warn("      to " + artifact);
             }

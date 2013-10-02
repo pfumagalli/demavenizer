@@ -86,14 +86,11 @@ public class Serializer {
             out.println("  <publications>");
             for (final Entry<ArtifactType, URI> entry: artifacts.entrySet()) {
                 final ArtifactType type = entry.getKey();
-                out.print("    <artifact name=\"" + descriptor.getModule() +
+                out.println("    <artifact name=\"" + descriptor.getModule() +
                                        "\" type=\"" + type.getType(configuration) +
-                                        "\" ext=\"" + type.getExtension(configuration));
-
-                if (!Boolean.parseBoolean(configuration.get("artifacts.fetch")))
-                    out.println("\" url=\"" + entry.getValue().toASCIIString());
-
-                out.println("\"/>");
+                                        "\" ext=\"" + type.getExtension(configuration) +
+                                        "\" url=\"" + entry.getValue().toASCIIString() +
+                                        "\"/>");
             }
             out.println("  </publications>");
         }

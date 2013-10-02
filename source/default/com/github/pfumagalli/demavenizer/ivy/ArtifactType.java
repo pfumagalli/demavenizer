@@ -16,13 +16,14 @@ public enum ArtifactType {
     }
 
     public String getType(Configuration configuration) {
-        final String configured = configuration.get("artifacts.type." + type + ".type");
-        return configured == null ? type : configured.trim();
+        return configuration.get("artifacts.type." + type + ".type");
     }
 
     public String getExtension(Configuration configuration) {
-        final String configured = configuration.get("artifacts.type." + type + ".extension");
-        return configured == null ? extension : configured.trim();
+        return configuration.get("artifacts.type." + type + ".extension");
     }
 
+    public String getArtifactFile(Configuration configuration, Marker marker) {
+        return configuration.getResolved("artifacts.type." + type + ".pattern", marker.asMap());
+    }
 }
