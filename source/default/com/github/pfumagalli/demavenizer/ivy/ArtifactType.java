@@ -5,22 +5,20 @@ import com.github.pfumagalli.demavenizer.Configuration;
 
 public enum ArtifactType {
 
-    BIN(".jar"), SRC(".zip"), DOC(".zip");
+    BIN, SRC, DOC;
 
-    private final String extension;
     private final String type;
 
-    private ArtifactType(String extension) {
-        this.extension = extension;
+    private ArtifactType() {
         type = name().toLowerCase();
     }
 
     public String getType(Configuration configuration) {
-        return configuration.get("artifacts.type." + type + ".type");
+        return configuration.get("artifacts.type." + type + ".type").trim();
     }
 
     public String getExtension(Configuration configuration) {
-        return configuration.get("artifacts.type." + type + ".extension");
+        return configuration.get("artifacts.type." + type + ".extension").trim();
     }
 
     public String getArtifactFile(Configuration configuration, Marker marker) {

@@ -3,6 +3,8 @@ package com.github.pfumagalli.demavenizer;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URI;
@@ -200,12 +202,9 @@ public class Main {
                 final ArtifactType type = entry.getKey();
                 final URI uri = entry.getValue();
                 final File artifact = new File(type.getArtifactFile(configuration, descriptor)).getCanonicalFile();
-                Log.warn("Fetching " + uri);
-                Log.warn("      to " + artifact);
+                fetch(uri, artifact);
             }
         }
-
-        System.exit(0);
 
         final OutputStream out = new FileOutputStream(file);
         Serializer.toXml(out, descriptor, configuration);
@@ -213,4 +212,26 @@ public class Main {
         out.close();
     }
 
+    private static void fetch(URI uri, File file)
+    throws IOException {
+        Log.info("Fetching " + uri);
+        Log.info("      to " + file);
+
+        final InputStream input = uri.toURL().openStream();
+        final OutputStream output = new FileOutputStream(file);
+        final byte buffer[] = new byte[4096];
+        long total = 0;
+        int size;
+        while ((size = input.read(buffer)) >= 0) {
+            output.write(buffer, 0, size);
+            total += size;
+        }
+
+        output.flush();
+        output.close();
+        input.close();
+
+        Log.info("   total " + total + " bytes");
+
+    }
 }
