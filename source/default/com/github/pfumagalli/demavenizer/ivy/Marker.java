@@ -1,5 +1,9 @@
 package com.github.pfumagalli.demavenizer.ivy;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.github.pfumagalli.demavenizer.maven.Identifier;
 
 public class Marker implements Comparable<Marker> {
@@ -58,6 +62,14 @@ public class Marker implements Comparable<Marker> {
 
     public Revision getRevision() {
         return revision;
+    }
+
+    public Map<String, String> asMap() {
+        final Map<String, String> map = new HashMap<>();
+        map.put("organisation", getOrganisation());
+        map.put("module", getModule());
+        map.put("revision", getRevision().toString());
+        return Collections.unmodifiableMap(map);
     }
 
     public String asString() {
