@@ -9,17 +9,18 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.github.pfumagalli.demavenizer.Configuration;
 import com.github.pfumagalli.demavenizer.License;
 import com.github.pfumagalli.demavenizer.maven.Dependency;
 import com.github.pfumagalli.demavenizer.maven.Identifier;
 
 public class Serializer {
 
-    public Serializer() {
-        // TODO Auto-generated constructor stub
+    private Serializer() {
+        throw new IllegalStateException();
     }
 
-    public static void toXml(OutputStream output, Descriptor descriptor)
+    public static void toXml(OutputStream output, Descriptor descriptor, Configuration configuration)
     throws IOException {
         final Writer writer = new OutputStreamWriter(output, "UTF-8");
         final PrintWriter out = new PrintWriter(writer);
@@ -86,8 +87,8 @@ public class Serializer {
             for (final Entry<ArtifactType, URI> entry: artifacts.entrySet()) {
                 final ArtifactType type = entry.getKey();
                 out.println("    <artifact name=\"" + descriptor.getModule() +
-                                       "\" type=\"" + type.name().toLowerCase() +
-                                        "\" ext=\"" + (type == ArtifactType.BIN ? "jar" : "zip") +
+                                       "\" type=\"" + type.getType(configuration) +
+                                        "\" ext=\"" + type.getExtension(configuration) +
                                         "\" url=\"" + entry.getValue().toASCIIString() +
                                         "\"/>");
             }
