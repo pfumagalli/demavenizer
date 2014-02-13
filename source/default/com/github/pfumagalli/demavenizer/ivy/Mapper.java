@@ -60,6 +60,13 @@ public class Mapper {
             identifier = mapped;
         }
 
+        /* Forced mapping catching all versions?? */
+        final Identifier unversioned = mavenMappings.get(identifier.unversioned());
+        if (unversioned != null) {
+            Log.warn("Using mapped " + unversioned.asString() + " instead of " + identifier.asString());
+            identifier = unversioned;
+        }
+
         /* Need to get up latest version */
         if (identifier.getVersion() == null){
             final Marker marker = latestVersion.get(identifier);
