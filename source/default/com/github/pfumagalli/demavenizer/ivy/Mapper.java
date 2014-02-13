@@ -63,7 +63,7 @@ public class Mapper {
         /* Forced mapping catching all versions?? */
         final Identifier unversioned = mavenMappings.get(identifier.unversioned());
         if (unversioned != null) {
-            Log.warn("Using mapped " + unversioned.asString() + " instead of " + identifier.asString());
+            Log.warn("Using mapped " + unversioned.asString() + " instead of " + identifier.asString() + " (unversioned)");
             identifier = unversioned;
         }
 
