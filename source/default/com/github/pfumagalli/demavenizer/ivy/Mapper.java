@@ -44,9 +44,7 @@ public class Mapper {
         final Identifier unversioned = identifier.unversioned();
         if (latestVersion.containsKey(unversioned)) return latestVersion.get(unversioned);
         for (final Marker marker: latestVersion.values()) {
-            if ((!marker.getOrganisation().equals(identifier.getGroupId())) |
-                (!marker.getModule().equals(identifier.getArtifactId()))) continue;
-            return marker;
+            if (marker.getIdentifier().unversioned().equals(unversioned)) return marker;
         }
         return null;
     }
@@ -77,7 +75,22 @@ public class Mapper {
         }
 
         /* Check if we have a mapping */
-        return ivyMappings.get(identifier);
+        final Marker marker = ivyMappings.get(identifier);
+        if (marker != null) return marker;
+
+        /* Can we upgrade to the latest version? */
+        final Marker latest = latestVersion.get(identifier.unversioned());
+        if (latest == null) return null;
+
+        /* Check version */
+        if (latest.getIdentifier().compareTo(identifier) > 0) {
+            Log.warn("Upgrading " + identifier.asString() + " to " + latest.getIdentifier().asString());
+            return latest;
+        }
+
+        /* Really nothing found */
+        return null;
+
     }
 
     private void calculateLatest() {
