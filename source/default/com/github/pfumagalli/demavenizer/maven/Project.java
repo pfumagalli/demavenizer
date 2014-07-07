@@ -82,6 +82,11 @@ public class Project extends Identifier {
             }
         }
 
+        /* Group ID, artifact ID and version? */
+        if (! properties.containsKey("groupId")) properties.put("groupId", identifier.getGroupId());
+        if (! properties.containsKey("artifactId")) properties.put("artifactId", identifier.getArtifactId());
+        if (! properties.containsKey("version")) properties.put("version", identifier.getVersion());
+
         /* Freeze basics */
         final String uriString = node.getChildText("url", properties, null);
         this.uri = uriString == null ? uri == null ? null : uri : URI.create(uriString);
