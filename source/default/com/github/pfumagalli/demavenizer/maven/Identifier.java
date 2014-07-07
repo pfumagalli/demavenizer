@@ -69,7 +69,7 @@ public class Identifier implements Comparable<Identifier> {
     }
 
     public String asString() {
-        final StringBuilder builder = new StringBuilder(groupId).append('#').append(artifactId);
+        final StringBuilder builder = new StringBuilder().append(groupId).append('#').append(artifactId);
         if (version != null) builder.append('#').append(version);
         return builder.toString();
     }
