@@ -1,7 +1,2 @@
-.DS_Store
-.classpath
-.ivycache/*
-.project
-.settings/
-lib/*
-target/*
+.*
+target

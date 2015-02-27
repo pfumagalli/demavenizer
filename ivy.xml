@@ -1,11 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ivy-module version="2.0">
-  <info module="demavenizer" organisation="com.github.pfumagalli" revision="0.0.0" />
+
+  <info organisation="org.usrz" module="demavenizer" revision="0.1"/>
+
   <configurations>
-    <conf name="default"/>
-    <conf name="test"/>
+    <conf name="default" visibility="public"/>
+    <conf name="compile" visibility="private" extends="default"/>
+    <conf name="testing" visibility="private" extends="compile"/>
   </configurations>
+
+  <publications>
+      <artifact name="demavenizer" type="bin" ext="jar" conf="default"/>
+      <artifact name="demavenizer" type="src" ext="zip" conf="default"/>
+      <artifact name="demavenizer" type="doc" ext="zip" conf="default"/>
+  </publications>
+
   <dependencies>
-    <dependency org="org.testng" name="testng" rev="6.8.5" conf="test->default"/>
+    <dependency org="org.testng" name="testng" rev="latest.release" conf="testing->default"/>
   </dependencies>
+
 </ivy-module>
